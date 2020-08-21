@@ -1,5 +1,5 @@
 from odoo import models, api
-from odoo.tools import float_round, float_compare
+from odoo.tools import float_round
 
 
 class SaleOrderLine(models.Model):
@@ -14,8 +14,6 @@ class SaleOrderLine(models.Model):
             qty = float_round(
                 qty, precision_rounding=uom.rounding, rounding_method='UP'
             )
-
-            if float_compare(qty, self.product_uom_qty, precision_rounding=uom.rounding) != 0:
-                self.product_uom_qty = qty
+            self.product_uom_qty = qty
 
         return super(SaleOrderLine, self).product_uom_change()
