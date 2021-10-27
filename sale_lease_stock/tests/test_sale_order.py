@@ -46,6 +46,7 @@ class TestSaleOrder(TestSaleCommon):
                             "lease_pricing_id": self.product_lease.lease_pricing_ids[
                                 0
                             ].id,
+                            "product_uom_qty": 1.0,
                         },
                     )
                 ],
@@ -54,5 +55,37 @@ class TestSaleOrder(TestSaleCommon):
 
         sale_order.action_confirm()
 
-        self.assertEqual(sale_order.lease_schedule_count, 2)
-        self.assertEqual(sale_order.order_line.qty_to_invoice, 0.0)
+        self.assertEqual(
+            sale_order.lease_schedule_count,
+            2,
+            "there should be 2 lease schedules created",
+        )
+        self.assertEqual(
+            sale_order.order_line.qty_to_invoice,
+            0.0,
+            "the lease sale order line should have 0 qty to invoice",
+        )
+
+        lease_schedule_ids = sale_order.order_line.lease_schedule_ids
+        lease_schedule_ids[0].action_create_invoices()
+
+        self.assertEqual(
+            lease_schedule_ids[0].state,
+            "done",
+            "after creating an invoice from a lease schedule the schedule state must be done",
+        )
+
+        self.assertEqual(
+            sale_order.order_line.qty_invoiced,
+            0.5,
+            "after invoicing 50% of the lease schedule the qty_invoiced must be 0.5",
+        )
+
+        lease_schedule_ids[1].action_create_invoices()
+        self.assertEqual(
+            sale_order.order_line.qty_invoiced,
+            1.0,
+            "after invoicing 100% of the lease schedule the qty_invoiced must be 1.0",
+        )
+
+        # TODO: add credit note check/support tomorrow morning
