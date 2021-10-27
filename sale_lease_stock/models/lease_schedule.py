@@ -122,9 +122,14 @@ class LeaseSchedule(models.Model):
 
     def _get_invoice_line_vals(self):
         self.ensure_one()
+        order_id = self.line_id.order_id
+        sale_name = order_id.display_name
+        if order_id.client_order_ref:
+            sale_name = "{} ({})".format(sale_name, order_id.client_order_ref)
 
-        name = "{line}\nFor {date}".format(
-            line=self.line_id.name,
+        name = "{sale} - {line}\nLease Period: {date}".format(
+            sale=sale_name,
+            line=self.line_id.product_id.display_name,
             date=format_date(self.env, self.date),
         )
 
