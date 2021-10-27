@@ -236,9 +236,12 @@ class SaleOrderLine(models.Model):
         leased = self.filtered(lambda l: l.is_lease and l.state in ["sale", "done"])
 
         for line in leased:
-            qty_done = (line.product_uom_qty / len(line.lease_schedule_ids)) * len(
-                line.lease_schedule_ids.filtered(lambda l: l.state == "done")
-            )
+            qty_done = 0.0
+
+            if line.lease_schedule_ids:
+                qty_done = (line.product_uom_qty / len(line.lease_schedule_ids)) * len(
+                    line.lease_schedule_ids.filtered(lambda l: l.state == "done")
+                )
 
             line.qty_invoiced = qty_done
 

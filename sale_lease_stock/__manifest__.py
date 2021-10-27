@@ -11,6 +11,7 @@
         "views/product.xml",
         "views/sale.xml",
         "views/lease_schedule.xml",
+        "data/cron.xml",
     ],
     "demo": [],
     "license": "Other proprietary",

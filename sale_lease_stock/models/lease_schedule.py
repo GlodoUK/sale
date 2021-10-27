@@ -221,7 +221,7 @@ class LeaseSchedule(models.Model):
         return self.action_view_invoices()
 
     @api.model
-    def action_cron(self):
+    def _action_cron(self):
         pending = self.search(
             [
                 ("date", "<=", fields.Date.today()),
