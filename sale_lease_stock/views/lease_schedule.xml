@@ -14,7 +14,6 @@
                 <field name="currency_id" />
                 <field name="price" />
                 <field name="state" />
-                <field name="invoice_id" />
             </tree>
         </field>
     </record>
@@ -24,24 +23,46 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button
-                        name="action_create_invoices"
-                        type="object"
-                        string="Create Invoice"
-                    />
+                    <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                <button
+                            class="oe_stat_button"
+                            name="action_view_invoices"
+                            type="object"
+                            icon="fa-pencil-square-o"
+                            attrs="{'invisible':[('invoice_count', '=', 0)]}"
+                        >
+                   <field string="Invoices" name="invoice_count" widget="statinfo" />
+               </button>
+                    </div>
                     <group>
                         <field name="line_id" />
                         <field name="date" />
                         <field name="currency_id" invisible="1" />
                         <field name="price" />
-                        <field name="state" />
-                        <field name="invoice_id" />
                         <field name="quantity_to_invoice" />
+                    </group>
+                    <group groups="base.group_no_one" name="aml">
+                        <field name="account_move_line_ids">
+                            <tree>
+                                <field name="date" />
+                                <field name="move_id" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>
         </field>
+    </record>
+    <record model="ir.actions.server" id="action_create_invoices">
+        <field name="name">Create Invoices</field>
+        <field name="model_id" ref="model_sale_lease_stock_lease_schedule" />
+        <field name="state">code</field>
+        <field name="code">
+            action = records.action_create_invoices()
+        </field>
+        <field name="binding_model_id" ref="model_sale_lease_stock_lease_schedule" />
     </record>
 </odoo>
