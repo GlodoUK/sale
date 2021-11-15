@@ -33,6 +33,8 @@ class SaleOrder(models.Model):
             **kwargs
         )
 
+        line_id = self.env["sale.order.line"].browse(res["line_id"])
+
         if "lease" in kwargs:
             lease_id = self.env["sale_lease_stock.pricing"]
             lease = False
@@ -41,8 +43,6 @@ class SaleOrder(models.Model):
                 lease_id = self.env["sale_lease_stock.pricing"].search(
                     [("id", "=", kwargs.get("lease"))], limit=1
                 )
-
-            line_id = self.env["sale.order.line"].browse(res["line_id"])
 
             to_change = {"is_lease": lease}
             if lease_id:
@@ -53,5 +53,7 @@ class SaleOrder(models.Model):
                 )
 
             line_id.write(to_change)
+
+        line_id.price_unit = line_id._get_display_price(line_id.product_id)
 
         return res
