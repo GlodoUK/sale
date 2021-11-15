@@ -1,32 +1,24 @@
+<?xml version="1.0"?>
 <odoo>
-    <template id="product_inherit" inherit_id="website_sale.product">
-
-        <xpath expr="//t[@t-call='website_sale.product_price']" position="before">
-
-            <strong style="display: block; margin-bottom: 0.5rem">Leasing</strong>
-
-            <div style="margin-left: 1.5rem; padding: calc(1px + 0.375rem) 0px">
-
-                <select
-                    name="lease"
-                    t-attf-class="custom-select css_attribute_select #{'disabled' if not product_variant.lease_ok else ''}"
-                >
-                <option value="">No Lease, Outright Purchase</option>
-                <t
-                        t-foreach="product_variant.sudo()._get_lease_price_rules(pricelist=request.website.get_current_pricelist())"
-                        t-as="price"
-                    >
-                <option t-att-value="price.id"><t t-esc="price.display_name" /></option>
-        </t>
-    </select>
-
-
-
-</div>
-
-
-        </xpath>
-
-    </template>
-
+  <template id="product_inherit" inherit_id="website_sale.product">
+    <xpath expr="//t[@t-call='website_sale.product_price']" position="before">
+      <strong style="display: block; margin-bottom: 0.5rem">Leasing</strong>
+      <div style="margin-left: 1.5rem; padding: calc(1px + 0.375rem) 0px">
+        <select name="lease" t-attf-class="custom-select css_attribute_select #{'disabled' if not product_variant.lease_ok else ''}">
+          <option value="">No Lease, Outright Purchase</option>
+          <t t-foreach="product_variant.sudo()._get_lease_price_rules(pricelist=request.website.get_current_pricelist())" t-as="price">
+            <option t-att-value="price.id">
+              <t t-esc="price.display_name"/>
+            </option>
+          </t>
+        </select>
+      </div>
+    </xpath>
+  </template>
+  <!-- TODO: Temporary workaround until we can findout why website_sale_order_lines is computed as false-y semi-randomly -->
+  <template id="short_cart_summary" inherit_id="website_sale.short_cart_summary">
+    <xpath expr="//a[@role='button']" position="attributes">
+      <attribute name="t-if">website_sale_order</attribute>
+    </xpath>
+  </template>
 </odoo>
