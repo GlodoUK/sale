@@ -7,6 +7,7 @@
     "version": "14.0.1.0.1",
     "depends": ["website_sale", "sale_lease_stock"],
     "data": [
+        "security/ir.model.access.csv",
         "views/website_sale.xml",
         "views/assets.xml",
     ],
