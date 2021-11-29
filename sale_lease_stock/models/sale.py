@@ -223,7 +223,7 @@ class SaleOrderLine(models.Model):
 
     def _get_display_price(self, product):
         if self.is_lease and self.lease_pricing_id:
-            return self.lease_pricing_id._get_total_price()
+            return self.lease_pricing_id.price
         else:
             return super()._get_display_price(product)
 
