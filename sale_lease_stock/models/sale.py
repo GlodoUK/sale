@@ -106,16 +106,46 @@ class SaleOrderLine(models.Model):
     )
 
     lease_schedule_ids = fields.One2many("sale_lease_stock.lease.schedule", "line_id")
-    lease_price_unit = fields.Monetary(compute="_compute_lease_price_unit", store=True)
+    lease_price_unit = fields.Monetary(
+        compute="_compute_lease_price_unit",
+        store=True,
+        compute_sudo=True,
+    )
+    lease_price_subtotal = fields.Monetary(
+        compute="_compute_lease_price_unit",
+        store=True,
+        compute_sudo=True,
+    )
+    lease_price_tax = fields.Monetary(
+        compute="_compute_lease_price_unit", store=True, compute_sudo=True
+    )
+    lease_price_total = fields.Monetary(
+        compute="_compute_lease_price_unit", store=True, compute_sudo=True
+    )
 
-    @api.depends("is_lease", "lease_pricing_id")
+    @api.depends("is_lease", "lease_pricing_id", "product_uom_qty", "tax_id")
     def _compute_lease_price_unit(self):
         for record in self:
             if not record.is_lease or not record.lease_pricing_id:
                 record.lease_price_unit = False
+                record.lease_price_subtotal = False
+                record.lease_price_total = False
+                record.lease_price_tax = False
                 continue
 
             record.lease_price_unit = record.lease_pricing_id.price
+            taxes = record.tax_id.compute_all(
+                record.lease_price_unit,
+                record.order_id.currency_id,
+                record.product_uom_qty,
+                product=record.product_id,
+                partner=record.order_id.partner_shipping_id,
+            )
+            record.lease_price_subtotal = taxes.get("total_excluded", 0.0)
+            record.lease_price_total = taxes.get("total_included", 0.0)
+            record.lease_price_tax = sum(
+                t.get("amount", 0.0) for t in taxes.get("taxes", [])
+            )
 
     @api.depends(
         "is_lease", "qty_invoiced", "qty_delivered", "product_uom_qty", "order_id.state"
