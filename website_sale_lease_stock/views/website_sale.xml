@@ -8,7 +8,7 @@
                     name="lease"
                     t-attf-class="custom-select css_attribute_select #{'disabled' if not product_variant.lease_ok else ''}"
                 >
-          <option value="">No Lease, Outright Purchase</option>
+          <option value="">Purchase</option>
           <t
                         t-foreach="product_variant.sudo()._get_lease_price_rules(pricelist=request.website.get_current_pricelist())"
                         t-as="price"

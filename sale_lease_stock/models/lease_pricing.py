@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 
 
 class LeasePricing(models.Model):
@@ -17,11 +17,11 @@ class LeasePricing(models.Model):
     )
     unit = fields.Selection(
         [
-            ("hours", "Hour"),
-            ("days", "Day"),
-            ("weeks", "Week"),
-            ("months", "Month"),
-            ("years", "Year"),
+            ("hours", "Hours"),
+            ("days", "Days"),
+            ("weeks", "Weeks"),
+            ("months", "Months"),
+            ("years", "Years"),
         ],
         string="Unit",
         required=True,
@@ -66,15 +66,9 @@ class LeasePricing(models.Model):
         for key, value in self._fields["unit"]._description_selection(self.env):
             uom_translation[key] = value
         for pricing in self:
-            label = ""
-            if pricing.currency_id.position == "before":
-                label += pricing.currency_id.symbol + str(pricing.price)
-            else:
-                label += str(pricing.price) + pricing.currency_id.symbol
-            label = "%d %s @ %s" % (
+            label = _("Lease: %d %s") % (
                 pricing.duration,
                 uom_translation[pricing.unit],
-                label,
             )
             result.append((pricing.id, label))
         return result

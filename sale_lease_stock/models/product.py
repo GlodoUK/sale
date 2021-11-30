@@ -48,7 +48,10 @@ class ProductTemplate(models.Model):
                 {
                     "lease_ok": self.sudo().lease_ok,
                     "lease_pricing_rules": {
-                        rule.id: rule.display_name
+                        rule.id: {
+                            "name": rule.display_name,
+                            "price": rule.price,
+                        }
                         for rule in product._get_lease_price_rules(pricelist=pricelist)
                     },
                 }

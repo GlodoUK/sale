@@ -4,6 +4,34 @@ from odoo import http
 from odoo.http import request
 
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.website_sale.controllers.variant import VariantController
+
+
+class WebsiteSaleVariantController(VariantController):
+    @http.route()
+    def get_combination_info_website(
+        self, product_template_id, product_id, combination, add_qty, **kw
+    ):
+        res = super().get_combination_info_website(
+            product_template_id, product_id, combination, add_qty, **kw
+        )
+
+        try:
+            lease = int(kw.get("leasing", 0))
+        except ValueError:
+            lease = 0
+
+        if lease and lease in res.get("lease_pricing_rules", {}).keys():
+            rule = res.get("lease_pricing_rules", {}).get(lease, {})
+
+            res.update(
+                {
+                    "price": rule.get("price"),
+                    "list_price": rule.get("price"),
+                }
+            )
+
+        return res
 
 
 class WebsiteSaleController(WebsiteSale):
