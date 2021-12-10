@@ -4,6 +4,10 @@ from odoo import api, models
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    def _cart_can_checkout(self):
+        self.ensure_one()
+        return self.website_order_line
+
     def _cart_find_product_line(self, product_id=None, line_id=None, **kwargs):
         self.ensure_one()
         lines = super()._cart_find_product_line(product_id, line_id, **kwargs)
@@ -56,7 +60,7 @@ class SaleOrder(models.Model):
 
         if line_id.exists() and line_id.is_lease:
             line_id.price_unit = line_id._get_display_price(line_id.product_id)
-            line_id.order_id._compute_website_order_line()
+            # line_id.order_id._compute_website_order_line()
 
         return res
 

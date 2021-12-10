@@ -21,10 +21,11 @@
       </div>
     </xpath>
   </template>
-  <!-- TODO: Temporary workaround until we can findout why website_sale_order_lines is computed as false-y semi-randomly -->
   <template id="short_cart_summary" inherit_id="website_sale.short_cart_summary">
     <xpath expr="//a[@role='button']" position="attributes">
-      <attribute name="t-if">website_sale_order</attribute>
+      <attribute
+                name="t-if"
+            >website_sale_order and website_sale_order._cart_can_checkout()</attribute>
     </xpath>
-</template>
+      </template>
 </odoo>
