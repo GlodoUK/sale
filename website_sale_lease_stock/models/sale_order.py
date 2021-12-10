@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import api, models
 
 
 class SaleOrder(models.Model):
@@ -59,3 +59,19 @@ class SaleOrder(models.Model):
             line_id.order_id._compute_website_order_line()
 
         return res
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    @api.depends("product_id.display_name", "is_lease")
+    def _compute_name_short(self):
+
+        super()._compute_name_short()
+
+        for record in self.filtered(lambda l: l.is_lease):
+            record.name_short = "{} ({} {})".format(
+                record.name_short,
+                record.lease_pricing_id.duration,
+                record.lease_pricing_id.unit,
+            )
