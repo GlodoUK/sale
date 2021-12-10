@@ -27,16 +27,4 @@
       <attribute name="t-if">website_sale_order</attribute>
     </xpath>
 </template>
-<template id="cart_lines" inherit_id="website_sale.cart_lines">
-    <xpath
-            expr="//t[@t-call='website_sale.cart_line_product_link']/strong"
-            position="after"
-        >
-        <strong t-if="line.is_lease">
-            (<t t-esc="line.lease_pricing_id.duration" /> <t
-                    t-esc="line.lease_pricing_id.unit"
-                />)
-        </strong>
-    </xpath>
-</template>
 </odoo>
