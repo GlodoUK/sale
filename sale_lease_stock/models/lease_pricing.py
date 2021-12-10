@@ -2,6 +2,14 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
 
+PERIODS = [
+    ("hours", "Hours"),
+    ("days", "Days"),
+    ("weeks", "Weeks"),
+    ("months", "Months"),
+    ("years", "Years"),
+]
+
 
 class LeasePricing(models.Model):
     """Sale Lease pricing rules."""
@@ -16,13 +24,7 @@ class LeasePricing(models.Model):
         default=12,
     )
     unit = fields.Selection(
-        [
-            ("hours", "Hours"),
-            ("days", "Days"),
-            ("weeks", "Weeks"),
-            ("months", "Months"),
-            ("years", "Years"),
-        ],
+        PERIODS,
         string="Unit",
         required=True,
         default="months",
