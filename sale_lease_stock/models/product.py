@@ -8,6 +8,7 @@ class ProductTemplate(models.Model):
         string="Can be Leased",
         help="Allow leasing of this product.",
         index=True,
+        copy=True,
     )
     lease_pricing_ids = fields.One2many(
         "sale_lease_stock.pricing",
@@ -24,6 +25,11 @@ class ProductProduct(models.Model):
     def _get_lease_price_rules(self, **kwargs):
         self.ensure_one()
 
+        if not self.lease_ok:
+            return self.env["sale_lease_stock.pricing"]
+
+        pricelist = kwargs.get("pricelist", self.env["product.pricelist"])
+
         # Alternatively we can use the following domain.
         # This filter works better for smaller lists.
         # [
@@ -37,8 +43,6 @@ class ProductProduct(models.Model):
         #     ('pricelist_id', '=', False),
         #     ('pricelist_id', '=', parent.pricelist_id)
         # ]
-
-        pricelist = kwargs.get("pricelist", self.env["product.pricelist"])
 
         available_pricings = self.sudo().lease_pricing_ids.filtered(
             lambda p: p.pricelist_id == pricelist
