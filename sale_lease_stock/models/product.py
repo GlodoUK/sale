@@ -5,7 +5,9 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     lease_ok = fields.Boolean(
-        string="Can be Leased", help="Allow leasing of this product."
+        string="Can be Leased",
+        help="Allow leasing of this product.",
+        index=True,
     )
     lease_pricing_ids = fields.One2many(
         "sale_lease_stock.pricing",
@@ -14,50 +16,6 @@ class ProductTemplate(models.Model):
         auto_join=True,
         copy=True,
     )
-
-    def _get_combination_info(
-        self,
-        combination=False,
-        product_id=False,
-        add_qty=1,
-        pricelist=False,
-        parent_combination=False,
-        only_template=False,
-    ):
-        combination_info = super()._get_combination_info(
-            combination=combination,
-            product_id=product_id,
-            add_qty=add_qty,
-            pricelist=pricelist,
-            parent_combination=parent_combination,
-            only_template=only_template,
-        )
-
-        if combination_info.get("product_id"):
-            product = self.env["product.product"].browse(
-                combination_info.get("product_id")
-            )
-        else:
-            product = self.env["product.product"].search(
-                [("product_tmpl_id", "=", combination_info.get("product_template_id"))],
-                limit=1,
-            )
-
-        if product:
-            combination_info.update(
-                {
-                    "lease_ok": self.sudo().lease_ok,
-                    "lease_pricing_rules": {
-                        rule.id: {
-                            "name": rule.display_name,
-                            "price": rule.price,
-                        }
-                        for rule in product._get_lease_price_rules(pricelist=pricelist)
-                    },
-                }
-            )
-
-        return combination_info
 
 
 class ProductProduct(models.Model):

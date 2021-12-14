@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.osv import expression
 from odoo.tools import format_date
 
 
@@ -47,6 +48,44 @@ class SaleOrder(models.Model):
             line_id.price_unit = price
 
     def action_confirm(self):
+        for record in self:
+            partner_id = record.partner_id
+            lines = record.order_line.filtered(
+                lambda l: l.product_id and not l.is_delivery
+            )
+
+            if not partner_id.sale_ok and False in lines.mapped("is_lease"):
+                raise UserError(
+                    _(
+                        "You cannot confirm a sale order with a customer that is not "
+                        "allowed to sell."
+                    )
+                )
+
+            if not partner_id.lease_ok and True in lines.mapped("is_lease"):
+                raise UserError(
+                    _(
+                        "You cannot confirm a sale order with a customer that is not "
+                        "allowed to lease."
+                    )
+                )
+
+            if lines.filtered(lambda l: l.is_lease and not l.product_id.lease_ok):
+                raise UserError(
+                    _(
+                        "You cannot confirm a sale order with a product that is not "
+                        "allowed to be leased."
+                    )
+                )
+
+            if lines.filtered(lambda l: not l.is_lease and not l.product_id.sale_ok):
+                raise UserError(
+                    _(
+                        "You cannot confirm a sale order with a product that is not "
+                        "allowed to be sold."
+                    )
+                )
+
         res = super().action_confirm()
 
         for line_id in self.mapped("order_line").filtered(lambda l: l.is_lease):
@@ -91,7 +130,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    can_lease_product = fields.Boolean(related="product_id.lease_ok")
+    can_lease_product = fields.Boolean(compute="_compute_can_lease_product")
     is_lease = fields.Boolean(default=False)
     lease_pricing_id = fields.Many2one(
         "sale_lease_stock.pricing",
@@ -104,7 +143,6 @@ class SaleOrderLine(models.Model):
         compute="_compute_lease_end",
         store=True,
     )
-
     lease_schedule_ids = fields.One2many("sale_lease_stock.lease.schedule", "line_id")
     lease_price_unit = fields.Monetary(
         compute="_compute_lease_price_unit",
@@ -122,6 +160,48 @@ class SaleOrderLine(models.Model):
     lease_price_total = fields.Monetary(
         compute="_compute_lease_price_unit", store=True, compute_sudo=True
     )
+
+    @api.onchange("can_lease_product", "order_partner_id")
+    def _onchange_can_lease_product(self):
+        company_domain = [
+            "|",
+            ("company_id", "=", False),
+            ("company_id", "=", self.company_id),
+        ]
+
+        product_domain = []
+        partner_id = self.order_partner_id
+
+        if not partner_id:
+            product_domain.append(("sale_ok", "=", True))
+
+        if partner_id and partner_id.lease_ok:
+            product_domain.append(("lease_ok", "=", True))
+
+        if partner_id and partner_id.sale_ok:
+            product_domain = expression.OR(
+                [
+                    product_domain,
+                    [("sale_ok", "=", True)],
+                ]
+            )
+
+        return {
+            "domain": {"product_id": expression.AND([company_domain, product_domain])}
+        }
+
+    @api.depends("product_id", "order_partner_id")
+    def _compute_can_lease_product(self):
+        for record in self:
+            if not record.product_id.lease_ok:
+                record.can_lease_product = False
+                continue
+
+            if not record.order_partner_id.lease_ok:
+                record.can_lease_product = False
+                continue
+
+            record.can_lease_product = True
 
     @api.depends("is_lease", "lease_pricing_id", "product_uom_qty", "tax_id")
     def _compute_lease_price_unit(self):

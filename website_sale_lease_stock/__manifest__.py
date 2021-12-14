@@ -8,6 +8,7 @@
     "depends": ["website_sale", "sale_lease_stock"],
     "data": [
         "security/ir.model.access.csv",
+        "security/website_sale_lease_stock.xml",
         "views/website_sale.xml",
         "views/assets.xml",
     ],

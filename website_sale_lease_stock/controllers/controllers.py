@@ -18,7 +18,7 @@ class WebsiteSaleVariantController(VariantController):
 
         try:
             lease = int(kw.get("leasing", 0))
-        except ValueError:
+        except (ValueError, TypeError):
             lease = 0
 
         if lease and lease in res.get("lease_pricing_rules", {}).keys():

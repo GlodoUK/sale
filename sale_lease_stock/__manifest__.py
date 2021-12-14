@@ -11,6 +11,7 @@
         "views/product.xml",
         "views/sale.xml",
         "views/lease_schedule.xml",
+        "views/res_partner.xml",
         "data/cron.xml",
     ],
     "demo": [],
