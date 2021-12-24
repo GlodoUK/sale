@@ -6,7 +6,7 @@
     "website": "https://glodo.uk/",
     "category": "Sales",
     "version": "14.0.1.0.0",
-    "depends": ["website_sale_lease_stock"],
+    "depends": ["website_sale_lease_stock", "delivery"],
     "data": ["views/website_sale.xml"],
     "demo": [],
     "license": "Other proprietary",
