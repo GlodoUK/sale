@@ -56,6 +56,11 @@ class ProductTemplate(models.Model):
                         rule.id: {
                             "name": rule.display_name,
                             "price": rule.price,
+                            "unit": rule.unit,
+                            "duration": rule.duration,
+                            "unit_l10n": dict(
+                                rule._fields["unit"]._description_selection(self.env)
+                            ).get(rule.unit),
                         }
                         for rule in product._get_lease_price_rules(pricelist=pricelist)
                     }
