@@ -30,32 +30,15 @@
                 position="after"
             >
                 <field name="can_lease_product" invisible="1" />
-
                 <field
                     name="is_lease"
                     widget="boolean_toggle"
                     attrs="{'invisible': [('can_lease_product', '=', False)]}"
                 />
-            </xpath>
-
-            <xpath
-                expr="//field[@name='order_line']/form//field[@name='price_unit']"
-                position="attributes"
-            >
-                <attribute
-                    name="attrs"
-                >{'invisible': [('is_lease', '=', True)]}</attribute>
-                <attribute name="force_save">True</attribute>
-            </xpath>
-
-            <xpath
-                expr="//field[@name='order_line']/form//field[@name='price_unit']"
-                position="after"
-            >
                 <field name="product_template_id" invisible="1" />
                 <field
                     name="lease_pricing_id"
-                    string="Unit Price"
+                    string="Lease Pricing &amp; Duration"
                     attrs="{'invisible': [('is_lease', '=', False)]}"
                     domain="['&amp;', '&amp;', ('product_template_id', '=', product_template_id), '|', ('product_variant_ids', '=', False), ('product_variant_ids.id', '=', product_id), '|', ('pricelist_id', '=', False), ('pricelist_id', '=', parent.pricelist_id)]"
                 />
@@ -88,14 +71,6 @@
                     name="lease_pricing_id"
                     attrs="{'invisible': [('is_lease', '=', False)]}"
                     domain="[('product_template_id', '=', product_template_id)]"
-                />
-                <field
-                    name="date_lease_start"
-                    attrs="{'invisible': [('is_lease', '=', False)]}"
-                />
-                <field
-                    name="date_lease_end"
-                    attrs="{'invisible': [('is_lease', '=', False)]}"
                 />
             </xpath>
 

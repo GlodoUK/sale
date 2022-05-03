@@ -33,7 +33,7 @@ repos:
       # update the NOT INSTALLABLE ADDONS section above
       - id: oca-update-pre-commit-excluded-addons
       - id: oca-fix-manifest-website
-        args: ["https://glodo.uk/"]
+        args: ["https://github.com/glodouk/sale"]
   - repo: https://github.com/myint/autoflake
     rev: v1.4
     hooks:
@@ -46,7 +46,7 @@ repos:
           - --remove-duplicate-keys
           - --remove-unused-variables
   - repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 22.3.0
     hooks:
       - id: black
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -96,7 +96,7 @@ repos:
       - id: pyupgrade
         args: ["--keep-percent-format"]
   - repo: https://github.com/PyCQA/isort
-    rev: 5.5.1
+    rev: 5.9.3
     hooks:
       - id: isort
         name: isort except __init__.py
@@ -104,11 +104,11 @@ repos:
           - --settings=.
         exclude: /__init__\.py$
   - repo: https://gitlab.com/PyCQA/flake8
-    rev: 3.8.3
+    rev: 3.9.2
     hooks:
       - id: flake8
         name: flake8
-        additional_dependencies: ["flake8-bugbear==20.1.4"]
+        additional_dependencies: ["flake8-bugbear==21.9.2"]
   - repo: https://github.com/PyCQA/pylint
     rev: pylint-2.5.3
     hooks:
@@ -119,7 +119,7 @@ repos:
           - --exit-zero
         verbose: true
         additional_dependencies: &pylint_deps
-          - pylint-odoo==3.5.0
+          - pylint-odoo==5.0.5
       - id: pylint
         name: pylint with mandatory checks
         args:
