@@ -109,18 +109,24 @@ class SaleOrder(models.Model):
 
         return res
 
-    def action_cancel(self):
-        res = super().action_cancel()
+    def _action_cancel(self):
+        res = super()._action_cancel()
 
         lease_schedule_ids = self.mapped("order_line.lease_schedule_ids")
 
-        if any(i in ["done"] for i in lease_schedule_ids.mapped("state")):
+        if any(
+            i in ["done"]
+            for i in lease_schedule_ids.mapped("account_move_line_ids.move_id.state")
+        ):
             raise UserError(
-                _(
-                    "Cannot cancel an in progress lease, please manually cancel"
-                    " the remaining lines first"
-                )
+                _("Cannot cancel an in progress lease with completed invoices")
             )
+
+        move_ids = lease_schedule_ids.mapped("account_move_line_ids.move_id").filtered(
+            lambda m: m.state == "draft"
+        )
+        if move_ids:
+            move_ids.button_cancel()
 
         lease_schedule_ids.unlink()
 
