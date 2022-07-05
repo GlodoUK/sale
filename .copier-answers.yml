@@ -1,14 +1,18 @@
 # Do NOT update manually; changes here will be overwritten by Copier
-_commit: v1.5.0
+_commit: v1.7.0
 _src_path: https://github.com/OCA/oca-addons-repo-template.git
 ci: GitHub
 dependency_installation_mode: PIP
 generate_requirements_txt: false
 include_wkhtmltopdf: false
 odoo_version: 15.0
+org_name: Glo Networks
+org_slug: GlodoUK
 rebel_module_groups: []
 repo_description: Sale addons for Odoo
 repo_name: Sale addons for Odoo
 repo_slug: sale
+repo_website: https://github.com/GlodoUK/sale
 travis_apt_packages: []
 travis_apt_sources: []
+
