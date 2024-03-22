@@ -15,7 +15,7 @@ class SaleOrderHoldReason(models.Model):
         for record in self:
             name = record.name
             if record.code:
-                name = "[{}] {}".format(record.code, name)
+                name = f"[{record.code}] {name}"
             res.append((record.id, name))
         return res
 

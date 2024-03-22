@@ -15,7 +15,7 @@ class Salehold(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        res = super(Salehold, self).default_get(fields)
+        res = super().default_get(fields)
         sale_ids = self.env.context["active_ids"] or []
         active_model = self.env.context["active_model"]
 

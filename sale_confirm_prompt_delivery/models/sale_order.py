@@ -6,7 +6,7 @@ class SaleOrder(models.Model):
 
     def _show_missing_delivery_wizard(self):
         self.ensure_one()
-        return not self.order_line.filtered(lambda l: l.is_delivery)
+        return not self.order_line.filtered(lambda rec: rec.is_delivery)
 
     def action_check_delivery_confirm(self):
         for order in self:
