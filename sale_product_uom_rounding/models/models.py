@@ -16,4 +16,4 @@ class SaleOrderLine(models.Model):
             )
             self.product_uom_qty = qty
 
-        return super(SaleOrderLine, self).product_uom_change()
+        return super().product_uom_change()
