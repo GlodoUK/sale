@@ -13,7 +13,7 @@ github_enable_stale_action: false
 github_enforce_dev_status_compatibility: false
 include_wkhtmltopdf: false
 odoo_test_flavor: Both
-odoo_version: 15.0
+odoo_version: 17.0
 org_name: Glo Networks
 org_slug: GlodoUK
 rebel_module_groups: []
