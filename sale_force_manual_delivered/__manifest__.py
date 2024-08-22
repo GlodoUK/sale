@@ -4,7 +4,7 @@
     "author": "Glo Networks",
     "website": "https://github.com/GlodoUK/sale",
     "category": "Sales",
-    "version": "15.0.2.0.0",
+    "version": "17.0.1.0.0",
     "depends": ["sale_stock"],
     "data": [
         "views/sale_order.xml",
